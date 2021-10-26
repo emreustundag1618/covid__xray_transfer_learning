@@ -21,48 +21,31 @@ from configparser import ConfigParser
 
 from functions import *
 
-
-# %% ###################  Configuration   ##########################
-
 # parser config
 config_file = "./config.ini"
 cp = ConfigParser()
 cp.read(config_file)
-
-
-model_name = cp["DEFAULT"].get("model_name")  # transfer model to use for data
-learning_rate = cp["DEFAULT"].get("learning_rate")   # initialize learning rate
-min_learning_rate = cp["DEFAULT"].get("min_learning_rate")   # learning rate doesnt decrease further
+# default config
+model_name = cp["DEFAULT"].get("model_name")
+learning_rate = cp["DEFAULT"].get("learning_rate")
+min_learning_rate = cp["DEFAULT"].get("min_learning_rate")
 batch_size = cp["DEFAULT"].get("batch_size")
 epochs = cp["DEFAULT"].get("epochs")
-verbose = cp["DEFAULT"].get("verbose") # controls the amount of logging done during training and testing: 
-    # 0 - none , 
-    # 1 - reports metrics after each batch 
-    # 2 - reports metrics after each epoch
-    
+verbose = cp["DEFAULT"].get("verbose")
 img_process_function = cp["DEFAULT"].get("img_process_function")
-    # defined functions: equalize_adapthist, equalize_hist, rescale_intensity
-    
-isKaggleData = cp["DEFAULT"].get("isKaggleData")  # purpose of kaggle running
-
-classification_type = cp["DEFAULT"].get("classification_type")   # multi or binary
-classifier = cp["DEFAULT"].get("classifier")  # ann or svm
-
- # training images directory
-
-#  Feature extract for ML classifiers (SVM)
-train_num = cp["DEFAULT"].get("train_num")  # that means below generator yields number of train images = train_num * batch_size
+isKaggleData = cp["DEFAULT"].get("isKaggleData")
+classification_type = cp["DEFAULT"].get("classification_type")
+classifier = cp["DEFAULT"].get("classifier")
+train_num = cp["DEFAULT"].get("train_num")
 val_num = cp["DEFAULT"].get("val_num")
-show_cv_split_values = cp["DEFAULT"].get("show_cv_split_values")  # true or false
-feature_number = cp["DEFAULT"].get("feature_number")   # length of feature vector
-
-use_fine_tuning = cp["DEFAULT"].get("use_fine_tuning")   # if transfer model's weights are trainable
-use_chex_weights = cp["DEFAULT"].get("use_chex_weights")  # use chexnet weights
+show_cv_split_values = cp["DEFAULT"].get("show_cv_split_values")
+feature_number = cp["DEFAULT"].get("feature_number")
+use_fine_tuning = cp["DEFAULT"].get("use_fine_tuning")
+use_chex_weights = cp["DEFAULT"].get("use_chex_weights")
 
 input_shape = models_[model_name]["input_shape"]  # input shape required for transfer models
 img_size = input_shape[0]
 
-###########################################################################
 
 if isKaggleData:
     data, img_dir = prepare_data_for_kaggle()
@@ -188,21 +171,13 @@ if classifier == "ann":
 if classifier == "svm":
     output = Dense(feature_number, activation = "relu", name = "features")(output)
     model = Model(base_model.input, output)
-        
-       
+    
     #  Feature extract for ML classifiers
-
     x_tr, x_val, y_tr, y_val = generate_images_for_SVM(train_num, val_num)
-    
-    #  Feature extract for ML classifiers
-
     x_train, x_test, y_train, y_test = extract_features_from_images(x_tr, x_val, y_tr, y_val)
-    
     print_feature_shapes(x_train, x_test, y_train, y_test)
-
     show_SVM_results(x_train, x_test, y_train, y_test)
-    
-    
+
     if show_cv_split_values:
         cross_val_score_plot(number_of_top = 7)
     
