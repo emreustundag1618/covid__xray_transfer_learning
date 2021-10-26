@@ -1,10 +1,8 @@
 # %% Import Librarires
-
 import importlib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -182,7 +180,3 @@ if classifier == "svm":
         cross_val_score_plot(number_of_top = 7)
     
     get_confusion_matrix()
-    
-
-    
-    
