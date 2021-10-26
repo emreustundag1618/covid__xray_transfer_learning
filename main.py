@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -16,45 +17,50 @@ from tensorflow.keras import models
 from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint,  EarlyStopping
 from tensorflow.keras.models import Model
 
+from configparser import ConfigParser
 
 from functions import *
 
 
 # %% ###################  Configuration   ##########################
 
-model_name = "DenseNet121"  # transfer model to use for data
-learning_rate = 0.0001   # initialize learning rate
-min_learning_rate = 1e-8   # learning rate doesnt decrease further
-input_shape = models_[model_name]["input_shape"]  # input shape required for transfer models
-img_size = input_shape[0]
-batch_size = 32
-epochs = 2
-verbose = 1 # controls the amount of logging done during training and testing: 
+# parser config
+config_file = "./config.ini"
+cp = ConfigParser()
+cp.read(config_file)
+
+
+model_name = cp["DEFAULT"].get("model_name")  # transfer model to use for data
+learning_rate = cp["DEFAULT"].get("learning_rate")   # initialize learning rate
+min_learning_rate = cp["DEFAULT"].get("min_learning_rate")   # learning rate doesnt decrease further
+batch_size = cp["DEFAULT"].get("batch_size")
+epochs = cp["DEFAULT"].get("epochs")
+verbose = cp["DEFAULT"].get("verbose") # controls the amount of logging done during training and testing: 
     # 0 - none , 
     # 1 - reports metrics after each batch 
     # 2 - reports metrics after each epoch
     
-img_process_function = "equalize_adapthist" 
+img_process_function = cp["DEFAULT"].get("img_process_function")
     # defined functions: equalize_adapthist, equalize_hist, rescale_intensity
     
-isKaggleData = True  # purpose of kaggle running
+isKaggleData = cp["DEFAULT"].get("isKaggleData")  # purpose of kaggle running
 
-classification_type = "binary"   # multi or binary
-classifier = "ann"  # ann or svm
+classification_type = cp["DEFAULT"].get("classification_type")   # multi or binary
+classifier = cp["DEFAULT"].get("classifier")  # ann or svm
 
  # training images directory
 
 #  Feature extract for ML classifiers (SVM)
-train_num = 20  # that means below generator yields number of train images = train_num * batch_size
-val_num = 6
-show_cv_split_values = True  # true or false
-feature_number = 128   # length of feature vector
+train_num = cp["DEFAULT"].get("train_num")  # that means below generator yields number of train images = train_num * batch_size
+val_num = cp["DEFAULT"].get("val_num")
+show_cv_split_values = cp["DEFAULT"].get("show_cv_split_values")  # true or false
+feature_number = cp["DEFAULT"].get("feature_number")   # length of feature vector
 
+use_fine_tuning = cp["DEFAULT"].get("use_fine_tuning")   # if transfer model's weights are trainable
+use_chex_weights = cp["DEFAULT"].get("use_chex_weights")  # use chexnet weights
 
-use_fine_tuning = True   # if transfer model's weights are trainable
-use_chex_weights = True  # use chexnet weights
-
-
+input_shape = models_[model_name]["input_shape"]  # input shape required for transfer models
+img_size = input_shape[0]
 
 ###########################################################################
 
