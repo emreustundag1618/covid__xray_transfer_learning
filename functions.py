@@ -250,4 +250,15 @@ def plot_svm_confusion_matrix(svc, x_test, y_test):
     plt.xlabel("Predictions")
     plt.ylabel("True Labels")
     plt.show()
+
+
+# This function displays imported libraries versions
+def display_versions(libraries = None):
     
+    from importlib import import_module
+    
+    for library in libraries:
+        print(f"{library} version: {import_module(library).__version__}")
+
+
+

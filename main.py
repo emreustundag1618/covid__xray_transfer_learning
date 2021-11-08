@@ -42,6 +42,12 @@ feature_number = cp["DEFAULT"].getint("feature_number")
 use_fine_tuning = cp["DEFAULT"].getboolean("use_fine_tuning")
 use_chex_weights = cp["DEFAULT"].getboolean("use_chex_weights")
 
+libraries = cp["DEFAULT"].get("libraries").split(",")
+show_versions = cp["DEFAULT"].getboolean("show_versions")
+
+if show_versions:
+    display_versions(libraries)
+
 models_ = get_models()
 input_shape = models_[model_name]["input_shape"]
 img_size = input_shape[0]
@@ -82,6 +88,7 @@ def preprocessing_function(img):
         img = exposure.rescale_intensity(img/255, clip_limit=0.03, kernel_size=24)
         
     return img
+
 
 
 image_generator_train = ImageDataGenerator(
