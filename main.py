@@ -10,11 +10,11 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import models
 from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint,  EarlyStopping
 from tensorflow.keras.models import Model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 
 from configparser import ConfigParser
 import importlib
-from skimage import exposure
+
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -41,6 +41,7 @@ show_cv_scores = cp["DEFAULT"].getboolean("show_cv_scores")
 feature_number = cp["DEFAULT"].getint("feature_number")
 use_fine_tuning = cp["DEFAULT"].getboolean("use_fine_tuning")
 use_chex_weights = cp["DEFAULT"].getboolean("use_chex_weights")
+svm_hyp_search = cp["DEFAULT"].get("svm_hyp_search")
 
 libraries = cp["DEFAULT"].get("libraries").split(",")
 show_versions = cp["DEFAULT"].getboolean("show_versions")
@@ -60,67 +61,25 @@ else:
     img_dir = "images/train"
     
 df_train = data.copy()
+drop_df = pd.read_excel("dropped_image_IDs.xlsx") + ".jpg"
 
-if classification_type == "binary":
-    y_col = "image_label"
-else:
-    y_col = "study_label"
+drop_index = []
+for row in drop_df.values:
+    drop_index.append(df_train[df_train["id"] == row[0]].index[0])
+    
+    
+df_train = df_train.drop(drop_index, axis = 0)
 
-if classifier != "ann":
-    class_mode = "raw"
-else:
-    class_mode = "categorical"
 
 # %% Generate Images
 
-# Defined image preprocessing functions
-
-def preprocessing_function(img):
-    
-    global img_process_function
-    func = img_process_function
-    
-    if func == "equalize_adapthist":
-        img = exposure.equalize_adapthist(img/255, clip_limit=0.03, kernel_size=24)
-    elif func == "equalize_hist":
-        img = exposure.equalize_hist(img/255, clip_limit=0.03, kernel_size=24)
-    elif func == "rescale_intensity":
-        img = exposure.rescale_intensity(img/255, clip_limit=0.03, kernel_size=24)
-        
-    return img
-
-
-
-image_generator_train = ImageDataGenerator(
-            validation_split=0.2,
-            #rotation_range=20,
-            horizontal_flip = True,
-            zoom_range = 0.1,
-            #shear_range = 0.1,
-            brightness_range = [0.8, 1.1],
-            fill_mode='nearest',
-            preprocessing_function=preprocessing_function)
-    
-image_generator_valid = ImageDataGenerator(validation_split=0.2,
-                                           preprocessing_function=preprocessing_function)
-    
-train_generator = image_generator_train.flow_from_dataframe(
-            dataframe = df_train,
-            directory=img_dir,
-            x_col = 'id',
-            y_col =  y_col,  
-            target_size=(img_size, img_size),
-            batch_size=batch_size,
-            subset='training', seed = 23, class_mode = class_mode) 
-    
-valid_generator=image_generator_valid.flow_from_dataframe(
-        dataframe = df_train,
-        directory=img_dir,
-        x_col = 'id',
-        y_col = y_col,
-        target_size=(img_size, img_size),
-        batch_size=batch_size,
-        subset='validation', shuffle=False,  seed=23, class_mode = class_mode)
+train_generator, valid_generator = generate_images( classifier = classifier, 
+                                                    classification_type = classification_type,
+                                                    df_train = df_train,
+                                                    img_process_function = img_process_function,
+                                                    img_dir = img_dir, 
+                                                    img_size = img_size, 
+                                                    batch_size = batch_size)
 
 # %% Model call, training and evaluating
 
@@ -204,13 +163,13 @@ if classifier == "svm":
     model = Model(base_model.input, output)
     
     #  Generate train and test images from generators
-    x_tr, x_val, y_tr, y_val = generate_images_for_SVM(train_generator, valid_generator, train_num, val_num)
+    x_tr, x_val, y_tr, y_val = prepare_images_for_SVM(train_generator, valid_generator, train_num, val_num)
     # Extract feature vectors
     x_train, x_test, y_train, y_test = extract_features_from_images(model, x_tr, x_val, y_tr, y_val)
     # Print feature vectors' shapes
     print_feature_shapes(x_train, x_test, y_train, y_test)  
     # Fit SVM cv models
-    clf, svc, y_pred = fit_cross_models(x_train, x_test, y_train, y_test)
+    clf, svc, y_pred = fit_cross_models(x_train, x_test, y_train, y_test, svm_hyp_search)
     # Print best estimators and accuracy scores
     print_best_results(clf, svc, x_train, y_train, x_test, y_test)
     

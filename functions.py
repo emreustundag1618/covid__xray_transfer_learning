@@ -9,7 +9,7 @@ from skimage import exposure
 from transfer_models import get_models
 
 
-# This function returns model's last convolution layer
+# Returns model's last convolution layer
 
 def get_last_conv_layer(base_model, model_name):
     
@@ -18,7 +18,7 @@ def get_last_conv_layer(base_model, model_name):
     
     return layer
 
-# A function to use for Covid TL models on Kaggle: https://www.kaggle.com/c/siim-covid19-detection
+# Use this for Covid TL models on Kaggle: https://www.kaggle.com/c/siim-covid19-detection
 
 def prepare_data_for_kaggle():
     
@@ -63,9 +63,9 @@ def plot_tl_metrics(history, model_name):
 
 
 
-# This function generate images for SVM classifier
+# Generates images for SVM classifier
 
-def generate_images_for_SVM(train_generator, valid_generator, train_num, val_num):
+def prepare_images_for_SVM(train_generator, valid_generator, train_num, val_num):
     
     x_list = []
     y_list = []
@@ -98,7 +98,7 @@ def generate_images_for_SVM(train_generator, valid_generator, train_num, val_num
     return x_tr, x_val, y_tr, y_val
 
 
-# A function to extract features from generated images for SVM classifier 
+# Extracts features from generated images for SVM classifier 
     
 def extract_features_from_images(model, x_tr, x_val, y_tr, y_val):
         
@@ -110,7 +110,7 @@ def extract_features_from_images(model, x_tr, x_val, y_tr, y_val):
     return x_train, x_test, y_train, y_test
 
 
-# This prints feature vectors' shapes
+# Prints feature vectors' shapes
     
 def print_feature_shapes(x_train, x_test, y_train, y_test):
     
@@ -122,20 +122,45 @@ def print_feature_shapes(x_train, x_test, y_train, y_test):
     
     
 
-# A function fits SVM model with Grid Search Cross Validation   
+# Fits SVM model with Grid Search or Bayes Search Cross Validation   
 
-def fit_cross_models(x_train, x_test, y_train, y_test):
+def fit_cross_models(x_train, x_test, y_train, y_test, svm_hyp_search):
     
-    svc_param_grid = {"kernel" : ["rbf", "poly", "linear"],
-                      "gamma": [0.001, 0.01, 0.1, 1],
-                      "C": [1,10,50,100,200,300]}
-    
-    clf = GridSearchCV(SVC(random_state = 42), param_grid = svc_param_grid, 
-                       cv = StratifiedKFold(n_splits = 10), scoring = "accuracy", 
-                       n_jobs = -1,verbose = 1)
-    
+    if svm_hyp_search == "grid":
+        
+        svc_param_grid = {"kernel" : ["rbf", "poly", "linear"],
+                          "gamma": [0.001, 0.01, 0.1, 1],
+                          "C": [1,10,50,100,200,300]}
+        
+        clf = GridSearchCV(SVC(random_state = 42), param_grid = svc_param_grid, 
+                           cv = StratifiedKFold(n_splits = 10), scoring = "accuracy", 
+                           n_jobs = -1,verbose = 1)
+        
+        
+        
+    else:
+        
+        from skopt import BayesSearchCV
+        
+        # log-uniform: understand as search over p = exp(x) by varying x
+        
+        search_spaces = {
+                        'C': (1e-4, 1e+4, 'log-uniform'),
+                        'gamma': (1e-4, 1e+4, 'log-uniform'),
+                        'degree': (1, 8),  # integer valued parameter
+                        'kernel': ['linear', 'poly', 'rbf'],  # categorical parameter
+                        }
+        
+        clf = BayesSearchCV(
+            SVC(random_state = 42),
+            search_spaces=search_spaces,
+            n_iter=32,
+            cv=3)
+        
+        
+
     clf.fit(x_train, y_train)
-    
+        
     svc = clf.best_estimator_
     svc.fit(x_train, y_train)
     y_pred = svc.predict(x_test)
@@ -143,7 +168,7 @@ def fit_cross_models(x_train, x_test, y_train, y_test):
     return clf, svc, y_pred
 
 
-# This function plots each cross validation split's accuracy scores for number of top pairs of parameters
+# Plots each cross validation split's accuracy scores for number of top pairs of parameters
 
 def plot_cv_splits(clf, number_of_top = 7):
     
@@ -175,7 +200,7 @@ def plot_cv_splits(clf, number_of_top = 7):
     plt.show()
     
 
-# This function (if uses) shows each combinations of parameter's accuracy scores on SVM, max_rank = 10 means "best ten combination"
+# TShows each combinations of parameter's accuracy scores on SVM, max_rank = 10 means "best ten combination"
 
 def plot_cv_scores(clf, max_rank = 10):
     
@@ -201,7 +226,7 @@ def plot_cv_scores(clf, max_rank = 10):
     plt.show()
 
     
-# The following function prints best SVM scores and estimator
+# Prints best SVM scores and estimator
     
 def print_best_results(clf, svc, x_train, y_train, x_test, y_test):
     
@@ -213,7 +238,7 @@ def print_best_results(clf, svc, x_train, y_train, x_test, y_test):
     print("SVM Best Test Accuracy",test_accuracy)
     
     
-# This function shows confusion matrix for ANN classifier
+# Shows confusion matrix for ANN classifier
         
 def plot_tl_confusion_matrix(model, valid_generator):
     
@@ -232,7 +257,7 @@ def plot_tl_confusion_matrix(model, valid_generator):
     plt.show()
 
 
-# This function shows confusion matrix for SVM classifier
+# Shows confusion matrix for SVM classifier
     
 def plot_svm_confusion_matrix(svc, x_test, y_test):
     
@@ -252,7 +277,8 @@ def plot_svm_confusion_matrix(svc, x_test, y_test):
     plt.show()
 
 
-# This function displays imported libraries versions
+# Displays imported libraries versions
+
 def display_versions(libraries = None):
     
     from importlib import import_module
@@ -261,4 +287,159 @@ def display_versions(libraries = None):
         print(f"{library} version: {import_module(library).__version__}")
 
 
+# Generates image data
 
+def generate_images(classifier, classification_type, img_process_function, df_train, img_dir, img_size, batch_size):
+    
+    from tensorflow.keras.preprocessing.image import ImageDataGenerator
+    
+    from skimage import exposure
+    
+    # Defined image preprocessing functions
+
+    def preprocess_function(img):
+        
+        if img_process_function == "equalize_adapthist":
+            img = exposure.equalize_adapthist(img/255, clip_limit=0.03, kernel_size=24)
+        elif img_process_function == "equalize_hist":
+            img = exposure.equalize_hist(img/255, clip_limit=0.03, kernel_size=24)
+        elif img_process_function == "rescale_intensity":
+            img = exposure.rescale_intensity(img/255, clip_limit=0.03, kernel_size=24)
+            
+        return img
+    
+    
+    
+    # parameters for SVM classifier to be extracted from ImageDataGenerators
+    
+    featurewise_center=False
+    samplewise_center=False
+    featurewise_std_normalization=False
+    samplewise_std_normalization=False
+    zca_whitening=False
+    rotation_range=0
+    width_shift_range=0.0
+    height_shift_range=0.0
+    brightness_range=None
+    shear_range=0.0
+    zoom_range=0.0
+    channel_shift_range=0.0
+    cval=0.0
+    horizontal_flip=False
+    vertical_flip=False
+    rescale=None
+    preprocessing_function=preprocess_function
+    validation_split=0.25
+
+    
+    if classification_type == "binary":
+        y_col = "image_label"
+    else:
+        y_col = "study_label"
+
+    if classifier == "ann":
+        class_mode = "categorical"
+        zca_epsilon=1e-06
+        rotation_range=20
+        width_shift_range=0.0
+        height_shift_range=0.0
+        brightness_range=[0.8, 1.1]
+        shear_range=0.1
+        zoom_range=0.0
+        channel_shift_range=0.0
+        fill_mode='nearest'
+        cval=0.0
+        horizontal_flip=False
+        vertical_flip=False
+        rescale=None
+        preprocessing_function=preprocess_function
+    else:
+        class_mode = "raw"
+        
+    
+    image_generator_train = ImageDataGenerator(
+                featurewise_center=featurewise_center,
+                samplewise_center=samplewise_center,
+                featurewise_std_normalization=featurewise_std_normalization,
+                samplewise_std_normalization=samplewise_std_normalization,
+                zca_whitening=zca_whitening,
+                rotation_range=rotation_range,
+                width_shift_range=width_shift_range,
+                height_shift_range=height_shift_range,
+                brightness_range=brightness_range,
+                shear_range=shear_range,
+                zoom_range=zoom_range,
+                channel_shift_range=channel_shift_range,
+                cval=cval,
+                horizontal_flip=horizontal_flip,
+                vertical_flip=vertical_flip,
+                rescale=rescale,
+                preprocessing_function=preprocessing_function,
+                validation_split=validation_split)
+        
+    image_generator_valid = ImageDataGenerator(validation_split=validation_split,
+                                               preprocessing_function=preprocessing_function)
+        
+    train_generator = image_generator_train.flow_from_dataframe(
+                dataframe = df_train,
+                directory=img_dir,
+                x_col = 'id',
+                y_col =  y_col,  
+                target_size=(img_size, img_size),
+                batch_size=batch_size,
+                subset='training', 
+                seed = 42, 
+                class_mode = class_mode) 
+        
+    valid_generator = image_generator_valid.flow_from_dataframe(
+            dataframe = df_train,
+            directory=img_dir,
+            x_col = 'id',
+            y_col = y_col,
+            target_size=(img_size, img_size),
+            batch_size=batch_size,
+            subset='validation', 
+            shuffle=False,  
+            seed=42, 
+            class_mode = class_mode)
+    
+    return train_generator, valid_generator
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
