@@ -5,16 +5,16 @@ from functions import *
 from transfer_models import *
 
 from tensorflow.keras import layers
-from tensorflow.keras.layers import Input, Dense, Flatten, Conv2D, MaxPooling2D, Dropout, GlobalAveragePooling2D
+from tensorflow.keras.layers import Input, Dense, Flatten, Conv2D, MaxPooling2D, Dropout, GlobalAveragePooling2D, LeakyReLU
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import models
 from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint,  EarlyStopping
 from tensorflow.keras.models import Model
 
-
 from configparser import ConfigParser
 import importlib
 
+import os
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -45,6 +45,7 @@ svm_hyp_search = cp["DEFAULT"].get("svm_hyp_search")
 
 libraries = cp["DEFAULT"].get("libraries").split(",")
 show_versions = cp["DEFAULT"].getboolean("show_versions")
+save_weights = cp["DEFAULT"].getboolean("save_weights")
 
 if show_versions:
     display_versions(libraries)
@@ -60,26 +61,35 @@ else:
     data = pd.read_csv("train_data.csv")
     img_dir = "images/train"
     
-df_train = data.copy()
-drop_df = pd.read_excel("dropped_image_IDs.xlsx") + ".jpg"
+df_data = data.copy()
+
+# drop images from dataframe not in images directory
+files = os.listdir("images/train")
+
+not_in_files_index = []
+
+for file_id in df_data.id:
+    if file_id in files:
+        continue
+    else:
+        not_in_files_index.append(df_data[df_data["id"] == file_id].index[0])
+        
+df_data = df_data.drop(not_in_files_index, axis = 0)
+
+# drop images that have unclear view
+drop_df = pd.read_csv("dropped_image_IDs.csv") + ".jpg"
 
 drop_index = []
 for row in drop_df.values:
-    drop_index.append(df_train[df_train["id"] == row[0]].index[0])
+    drop_index.append(df_data[df_data["id"] == row[0]].index[0])
     
     
-df_train = df_train.drop(drop_index, axis = 0)
+df_data = df_data.drop(drop_index, axis = 0)
 
+# splitting images train and test
+df_train = df_data.iloc[:5000]
+df_test = df_data.iloc[5000:]
 
-# %% Generate Images
-
-train_generator, valid_generator = generate_images( classifier = classifier, 
-                                                    classification_type = classification_type,
-                                                    df_train = df_train,
-                                                    img_process_function = img_process_function,
-                                                    img_dir = img_dir, 
-                                                    img_size = img_size, 
-                                                    batch_size = batch_size)
 
 # %% Model call, training and evaluating
 
@@ -97,15 +107,12 @@ base_model = base_model_class(
             input_shape = input_shape,
             weights = "imagenet",
             pooling = "avg")
-base_model.trainable = False
 
-if use_fine_tuning:   
-    base_model.trainable = True
 
 
 if (model_name == "DenseNet121") & use_chex_weights:
     
-    chex_weights_path = '../input/chexnet-weights/brucechou1983_CheXNet_Keras_0.3.0_weights.h5'
+    chex_weights_path = 'brucechou1983_CheXNet_Keras_0.3.0_weights.h5'
     out = Dense(14, activation='sigmoid')(base_model.output)
     base_model = Model(inputs=base_model.input, outputs=out)
     base_model.load_weights(chex_weights_path)
@@ -115,13 +122,31 @@ if (model_name == "DenseNet121") & use_chex_weights:
 else:
     x = get_last_conv_layer(base_model, model_name).output
     output = GlobalAveragePooling2D()(x)
+
+
+base_model.trainable = False
+
+if use_fine_tuning:   
+    base_model.trainable = True
     
     
-if classifier == "ann":
+    print("Train and Validation Sets for Training Transfer Model:")
+    
+    train_generator, valid_generator = generate_images_for_model_training( classifier = classifier, 
+                                                                           classification_type = classification_type, 
+                                                                           img_process_function = img_process_function, 
+                                                                           df_train = df_train, 
+                                                                           df_test = df_test, 
+                                                                           img_dir = img_dir, 
+                                                                           img_size = img_size, 
+                                                                           batch_size = batch_size, 
+                                                                           validation_split = 0.15)
+        
     if classification_type == "multi":
         predictions = Dense(len(df_train.study_label.unique()), activation = "softmax", name = "multi_predictions")(output)
         model = Model(base_model.input, predictions)
-        model.compile(Adam(lr=learning_rate),loss='categorical_crossentropy',metrics=['accuracy'])   
+        model.compile(Adam(lr=learning_rate),loss='categorical_crossentropy',metrics=['accuracy'])
+        
     else:
         predictions = Dense(len(df_train.image_label.unique()), activation = "softmax", name = "binary_predictions")(output)
         model = Model(base_model.input, predictions)
@@ -136,7 +161,7 @@ if classifier == "ann":
                         restore_best_weights = True, verbose = verbose)
     
     ckp = ModelCheckpoint('model.h5',monitor = 'val_loss',
-                          verbose = 0, save_best_only = True, mode = 'min')
+                          verbose = verbose, save_best_only = True, mode = 'min')
     
     # Model fitting
     history = model.fit(
@@ -147,23 +172,39 @@ if classifier == "ann":
           verbose= verbose
           )
     
-    if use_fine_tuning:
+    if save_weights:
         model.save_weights(f"{model_name}-model.h5")
         
-    plot_tl_metrics(history, model_name)
+    if classifier == "ann":
     
-    plot_tl_confusion_matrix(model, valid_generator)
+        plot_tl_metrics(history, model_name)
         
+        plot_tl_confusion_matrix(model, valid_generator)
+    
 
 # %% X train and test extractions for ML classifiers, e.g SVM
 
 if classifier == "svm":
     
-    output = Dense(feature_number, activation = "relu", name = "features")(output)
+    output = Dense(feature_number, activation=LeakyReLU(alpha=0.2), name = "features")(output)
     model = Model(base_model.input, output)
     
+    print("Train and Test Sets for SVM Classifier:")
+    # for svm classifier there are different generators
+    train_generator, test_generator = generate_images_for_feature_extraction( classifier = classifier, 
+                                                                               classification_type = classification_type, 
+                                                                               img_process_function = img_process_function, 
+                                                                               df_train = df_train, 
+                                                                               df_test = df_test, 
+                                                                               img_dir = img_dir, 
+                                                                               img_size = img_size, 
+                                                                               batch_size = batch_size 
+                                                                               )
+    
+    
+
     #  Generate train and test images from generators
-    x_tr, x_val, y_tr, y_val = prepare_images_for_SVM(train_generator, valid_generator, train_num, val_num)
+    x_tr, x_val, y_tr, y_val = prepare_images_for_SVM(train_generator, test_generator, train_num, val_num)
     # Extract feature vectors
     x_train, x_test, y_train, y_test = extract_features_from_images(model, x_tr, x_val, y_tr, y_val)
     # Print feature vectors' shapes
@@ -173,9 +214,9 @@ if classifier == "svm":
     # Print best estimators and accuracy scores
     print_best_results(clf, svc, x_train, y_train, x_test, y_test)
     
-
-    if show_cv_scores:
-        plot_cv_splits(clf, number_of_top = 7)
-        plot_cv_scores(clf, max_rank = 10)
+    if svm_hyp_search == "grid":
+        if show_cv_scores:
+            plot_cv_splits(clf, number_of_top = 7)
+            plot_cv_scores(clf, max_rank = 10)
     
     plot_svm_confusion_matrix(svc, x_test, y_test)

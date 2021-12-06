@@ -66,7 +66,8 @@ def plot_tl_metrics(history, model_name):
 # Generates images for SVM classifier
 
 def prepare_images_for_SVM(train_generator, valid_generator, train_num, val_num):
-    
+
+
     x_list = []
     y_list = []
     
@@ -283,13 +284,15 @@ def display_versions(libraries = None):
     
     from importlib import import_module
     
+    print("Used Libraries:")
+    
     for library in libraries:
         print(f"{library} version: {import_module(library).__version__}")
 
 
-# Generates image data
+# Generates image data for training model
 
-def generate_images(classifier, classification_type, img_process_function, df_train, img_dir, img_size, batch_size):
+def generate_images_for_model_training(classifier, classification_type, img_process_function, df_train, df_test, img_dir, img_size, batch_size, validation_split = 0.15):
     
     from tensorflow.keras.preprocessing.image import ImageDataGenerator
     
@@ -308,78 +311,39 @@ def generate_images(classifier, classification_type, img_process_function, df_tr
             
         return img
     
-    
-    
-    # parameters for SVM classifier to be extracted from ImageDataGenerators
-    
-    featurewise_center=False
-    samplewise_center=False
-    featurewise_std_normalization=False
-    samplewise_std_normalization=False
-    zca_whitening=False
-    rotation_range=0
-    width_shift_range=0.0
-    height_shift_range=0.0
-    brightness_range=None
-    shear_range=0.0
-    zoom_range=0.0
-    channel_shift_range=0.0
-    cval=0.0
-    horizontal_flip=False
-    vertical_flip=False
-    rescale=None
-    preprocessing_function=preprocess_function
-    validation_split=0.25
-
+    # parameters for ANN classifier to be extracted from ImageDataGenerators
     
     if classification_type == "binary":
         y_col = "image_label"
     else:
         y_col = "study_label"
-
-    if classifier == "ann":
-        class_mode = "categorical"
-        zca_epsilon=1e-06
-        rotation_range=20
-        width_shift_range=0.0
-        height_shift_range=0.0
-        brightness_range=[0.8, 1.1]
-        shear_range=0.1
-        zoom_range=0.0
-        channel_shift_range=0.0
-        fill_mode='nearest'
-        cval=0.0
-        horizontal_flip=False
-        vertical_flip=False
-        rescale=None
-        preprocessing_function=preprocess_function
-    else:
-        class_mode = "raw"
-        
+    
     
     image_generator_train = ImageDataGenerator(
-                featurewise_center=featurewise_center,
-                samplewise_center=samplewise_center,
-                featurewise_std_normalization=featurewise_std_normalization,
-                samplewise_std_normalization=samplewise_std_normalization,
-                zca_whitening=zca_whitening,
-                rotation_range=rotation_range,
-                width_shift_range=width_shift_range,
-                height_shift_range=height_shift_range,
-                brightness_range=brightness_range,
-                shear_range=shear_range,
-                zoom_range=zoom_range,
-                channel_shift_range=channel_shift_range,
-                cval=cval,
-                horizontal_flip=horizontal_flip,
-                vertical_flip=vertical_flip,
-                rescale=rescale,
-                preprocessing_function=preprocessing_function,
-                validation_split=validation_split)
+                    featurewise_center=False,
+                    samplewise_center=False,
+                    featurewise_std_normalization=False,
+                    samplewise_std_normalization=False,
+                    zca_epsilon=1e-06,
+                    zca_whitening=False,
+                    width_shift_range=0.0,
+                    height_shift_range=0.0,
+                    brightness_range=[0.8, 1.1],
+                    shear_range=0.1,
+                    zoom_range=0.0,
+                    channel_shift_range=0.0,
+                    cval=0.0,
+                    horizontal_flip=False,
+                    vertical_flip=False,
+                    rescale=None,
+                    rotation_range=20,
+                    preprocessing_function=preprocess_function,
+                    validation_split=validation_split)
         
     image_generator_valid = ImageDataGenerator(validation_split=validation_split,
-                                               preprocessing_function=preprocessing_function)
-        
+                                               preprocessing_function=preprocess_function)
+      
+
     train_generator = image_generator_train.flow_from_dataframe(
                 dataframe = df_train,
                 directory=img_dir,
@@ -389,7 +353,7 @@ def generate_images(classifier, classification_type, img_process_function, df_tr
                 batch_size=batch_size,
                 subset='training', 
                 seed = 42, 
-                class_mode = class_mode) 
+                class_mode = "categorical") 
         
     valid_generator = image_generator_valid.flow_from_dataframe(
             dataframe = df_train,
@@ -401,39 +365,70 @@ def generate_images(classifier, classification_type, img_process_function, df_tr
             subset='validation', 
             shuffle=False,  
             seed=42, 
-            class_mode = class_mode)
+            class_mode = "categorical")
     
     return train_generator, valid_generator
+
+
+
+def generate_images_for_feature_extraction(classifier, classification_type, img_process_function, df_train, df_test, img_dir, img_size, batch_size):
+
+    from tensorflow.keras.preprocessing.image import ImageDataGenerator
     
-   
+    from skimage import exposure
+    
+    # Defined image preprocessing functions
+
+    def preprocess_function(img):
+        
+        if img_process_function == "equalize_adapthist":
+            img = exposure.equalize_adapthist(img/255, clip_limit=0.03, kernel_size=24)
+        elif img_process_function == "equalize_hist":
+            img = exposure.equalize_hist(img/255, clip_limit=0.03, kernel_size=24)
+        elif img_process_function == "rescale_intensity":
+            img = exposure.rescale_intensity(img/255, clip_limit=0.03, kernel_size=24)
+            
+        return img
+    
+    # parameters for SVM classifier to be extracted from ImageDataGenerators
+    
+    if classification_type == "binary":
+        y_col = "image_label"
+    else:
+        y_col = "study_label"
     
     
+    image_generator_train = ImageDataGenerator(preprocessing_function=preprocess_function)
+        
+    image_generator_test = ImageDataGenerator(preprocessing_function=preprocess_function)
+      
+
+    train_generator = image_generator_train.flow_from_dataframe(
+            dataframe = df_train,
+            directory=img_dir,
+            x_col = 'id',
+            y_col =  y_col,  
+            target_size=(img_size, img_size),
+            batch_size=batch_size,
+            seed = 42, 
+            class_mode = "raw") 
     
+    valid_generator = image_generator_test.flow_from_dataframe(
+            dataframe = df_test,
+            directory=img_dir,
+            x_col = 'id',
+            y_col = y_col,
+            target_size=(img_size, img_size),
+            batch_size=batch_size,
+            shuffle=False,  
+            seed=42, 
+            class_mode = "raw")
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    return train_generator, valid_generator
+
+
+
+
     
     
     
