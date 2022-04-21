@@ -134,7 +134,7 @@ def fit_cross_models(x_train, x_test, y_train, y_test, svm_hyp_search):
                           "C": [1,10,50,100,200,300]}
         
         clf = GridSearchCV(SVC(random_state = 42), param_grid = svc_param_grid, 
-                           cv = StratifiedKFold(n_splits = 10), scoring = "accuracy", 
+                           cv = StratifiedKFold(n_splits = 5), scoring = "accuracy", 
                            n_jobs = -1,verbose = 1)
         
         
@@ -156,7 +156,7 @@ def fit_cross_models(x_train, x_test, y_train, y_test, svm_hyp_search):
             SVC(random_state = 42),
             search_spaces=search_spaces,
             n_iter=32,
-            cv=3)
+            cv=5)
         
         
 
