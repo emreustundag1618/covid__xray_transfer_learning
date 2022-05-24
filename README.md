@@ -8,17 +8,3 @@
 
 This application
 
-
-| **Radyografik Sınıflandırma** | **Bulgular** |
-| --- | --- |
-| **Tipik görünüm** | Multifokal, bilateral, periferik opasiteler |
-| Yuvarlak morfolojiye sahip opasiteler |
-| Alt akciğer-baskın dağılım |
-| **Atipik görünüm** | Tipik bulguların olmaması ve tek taraflı opasiteler, merkezi veya üst akciğer baskın dağılımı |
-| **Belirsiz görünüm** | Pnömotoraks veya plevral efüzyon |
-| Pulmoner ödem |
-| Lobar konsolidasyon |
-| Soliter akciğer nodülü veya kitlesi |
-| Diffüz küçük nodüller |
-| Boşluk |
-| **Pnömoni negatif** | Akciğerde belirgin opasite yok |
