@@ -34,6 +34,8 @@ This application has been prepared as a master's thesis for the classification o
 
 [https://www.kaggle.com/c/siim-covid19-detection](https://www.kaggle.com/c/siim-covid19-detection)
 
+For more info about the dataset: [https://osf.io/532ek/](https://osf.io/532ek/)
+
 ### Configuration:
 
 model\_name: CNN model name. &quot;DenseNet121&quot;, &quot;ResNet50&quot;, &quot;InceptionV3&quot; or &quot;Xception&quot;.
