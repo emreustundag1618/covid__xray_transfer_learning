@@ -70,7 +70,7 @@ isKaggleData: To train on Kaggle make this True and add following datasets to yo
 You can also reach kaggle notebooks used in this study:
 
 - CNN notebook: [https://www.kaggle.com/code/emreustundag/siim-covid-tl-ann-classifier](https://www.kaggle.com/code/emreustundag/siim-covid-tl-ann-classifier)
-- CNN + SVM notebook: [https://www.kaggle.com/code/emreustundag/siim-covid-tl-ann-classifier](https://www.kaggle.com/code/emreustundag/siim-covid-tl-ann-classifier)
+- CNN + SVM notebook: [https://www.kaggle.com/code/emreustundag/siim-covid-tl-ann-classifier](https://www.kaggle.com/code/emreustundag/siim-covid-tl-svm-classifier)
 
 classification\_type: Classification type &quot;binary&quot; or &quot;multi&quot;.
 
