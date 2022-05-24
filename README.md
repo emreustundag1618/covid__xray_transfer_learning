@@ -95,13 +95,13 @@ classes: Binary classification subtypes.
 
 train\_num: Number of image data for SVM. &quot;5500 / batch\_size&quot; means 5500 training images&#39; features will be extracted from CNN model.
 
-val\_num = Number of image data for SVM. &quot;800 / batch\_size&quot; means 800 test images&#39; features will be extracted from CNN model.
+val\_num: Number of image data for SVM. &quot;800 / batch\_size&quot; means 800 test images&#39; features will be extracted from CNN model.
 
-show\_cv\_scores = True if wanted to plot cross-validation accuracy scores.
+show\_cv\_scores: True if wanted to plot cross-validation accuracy scores.
 
 feature\_number: Number of features extracted from CNN model for SVM. 1000 has been used in the study.
 
-svm\_hyp\_search: Hyperparameter optimization technique for SVM.
+svm\_hyp\_search: Hyperparameter optimization technique for SVM. For Bayesian optimization “bayes” and for Grid search “grid”.
 
 ### Results:
 
