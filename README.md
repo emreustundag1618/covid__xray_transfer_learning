@@ -4,37 +4,37 @@
 
 ### Graduate School of Natural and Applied Sciences - Department of Statistics
 
-#### Summary
+#### *Summary*
 
 This application has been prepared as a master's thesis for the classification of Covid-19 disease from chest X-ray images. Convolutional neural networks and support vector machines are used for classification tasks.
 
-Classes with radiological findings:
+#### **Classes with radiological findings:**
 
-Negative: Pneumonia negative, no obvious opacity, healthy appearance
+*Negative:* Pneumonia negative, no obvious opacity, healthy appearance
 
-Typical appearance: Multifocal, bilateral, peripheral opacities, opacities with rounded morphology, lower lung-dominant distribution
+*Typical appearance:* Multifocal, bilateral, peripheral opacities, opacities with rounded morphology, lower lung-dominant distribution
 
-Atypical appearance: Absence of typical findings and unilateral opacities, central or upper lung predominant distribution
+*Atypical appearance:* Absence of typical findings and unilateral opacities, central or upper lung predominant distribution
 
-Indeterminate appearance: Findings that doesn't belong to typical or atypical appearances. For example, pneumothorax or pleural effusion, pulmonary edema, lobar consolidation, solitary lung nodule or mass, diffuse small nodules, cavity
+*Indeterminate appearance:* Findings that doesn't belong to typical or atypical appearances. For example, pneumothorax or pleural effusion, pulmonary edema, lobar consolidation, solitary lung nodule or mass, diffuse small nodules, cavity
 
-**Classification types:**
+#### **Classification types:**
 
-Negative - Positive with all appearence types (binary)
+*Negative - Positive* with all appearence types (binary)
 
-Negative – Typical (binary)
+*Negative – Typical* (binary)
 
-Negative – Atypical (ikili)
+*Negative – Atypical* (binary)
 
-Negative – Indeterminate (ikili)
+*Negative – Indeterminate* (binary)
 
-Negative - Typical - Atypical – Indeterminate (multi)
+*Negative - Typical - Atypical – Indeterminate* (multi)
 
 Dataset used in the study:
 
 [https://www.kaggle.com/c/siim-covid19-detection](https://www.kaggle.com/c/siim-covid19-detection)
 
-Configuration:
+#### Configuration:
 
 model\_name: CNN model name. &quot;DenseNet121&quot;, &quot;ResNet50&quot;, &quot;InceptionV3&quot; or &quot;Xception&quot;.
 
