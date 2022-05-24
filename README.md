@@ -4,7 +4,7 @@
 
 ### Graduate School of Natural and Applied Sciences - Department of Statistics
 
-### **Summary**
+### **Application Summary**
 
 This application has been prepared as a master's thesis for the classification of Covid-19 disease from chest X-ray images. Convolutional neural networks and support vector machines are used for classification tasks.
 
