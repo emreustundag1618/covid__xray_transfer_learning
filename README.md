@@ -18,6 +18,8 @@ This application has been prepared as a master's thesis for the classification o
 
 *Indeterminate appearance:* Findings that doesn't belong to typical or atypical appearances. For example, pneumothorax or pleural effusion, pulmonary edema, lobar consolidation, solitary lung nodule or mass, diffuse small nodules, cavity
 
+Looking at below samples you can see typical appearence (A), atypical appearace (B), indeterminate appearence (C) and Covid-19 pneumonia negative (D).
+
 ![Covid-19 Chest X-Ray Appearence Types](appearence_samples.jpg)
 
 ### **Classification types:**
