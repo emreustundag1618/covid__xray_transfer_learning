@@ -102,8 +102,8 @@ Results:
 | **Sınıflandırma tipi** | **ESA Modeli** | **ESA** | **ESA + DVM** |
 | --- | --- | --- | --- |
 | İkili(Covid-19 pozitif ya da negatif) | ResNet50V2 </br>InceptionV3</br>XCeption</br>CheXNet | 0.7850</br>0.7960</br>0.800</br> **0.807** | 0.7180</br>0.7990</br>0.7220</br>0.794 |
-| Çoklu(Tipik, atipik, belirsiz, normal) | ResNet50V2InceptionV3XCeptionCheXNet | 0.7470</br>0.7500</br>0.744</br> **0.771** | 0.6750.7260.6990.716 |
-| İkili(Tipik görünüm ya da negatif) | ResNet50V2InceptionV3XCeptionCheXNet | 0.8080.8350.8330.846 | 0.779 **0.856** 0.8400.832 |
-| İkili(Atipik görünüm ya da negatif) | ResNet50V2InceptionV3XCeptionCheXNet | 0.5000.5800.5310.645 | 0.5000.6360.582 **0.683** |
-| İkili(Belirsiz görünüm ya da negatif) | ResNet50V2InceptionV3XCeptionCheXNet | 0.6240.6860.5340.698 | 0.6200.6600.689 **0.752** |
+| Çoklu(Tipik, atipik, belirsiz, normal) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.7470</br>0.7500</br>0.744</br> **0.771** | 0.6750.7260.6990.716 |
+| İkili(Tipik görünüm ya da negatif) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.8080</br>0.8350</br>0.8330</br>0.846 | 0.779 </br>**0.856** </br>0.8400</br>0.832 |
+| İkili(Atipik görünüm ya da negatif) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.5000</br>0.5800</br>0.5310</br>0.645 | 0.5000</br>0.6360</br>0.582</br> **0.683** |
+| İkili(Belirsiz görünüm ya da negatif) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.6240</br>0.6860</br>0.5340</br>0.698 | 0.6200</br>0.6600</br>0.689 </br>**0.752** |
 
