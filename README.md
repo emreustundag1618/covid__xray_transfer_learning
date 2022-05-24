@@ -84,7 +84,7 @@ show\_model\_summary: True if wanted to display CNN model summary.
 
 save\_weights: True if wanted to save trained model.
 
-classes: Binary classification subtypes .
+classes: Binary classification subtypes.
 
 - For typical and negative, use: &quot;typical-none&quot;
 - For atypical and negative, use: &quot;atypical-none&quot;
