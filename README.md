@@ -20,7 +20,7 @@ This application has been prepared as a master's thesis for the classification o
 
 Looking at below samples you can see typical appearence (A), atypical appearace (B), indeterminate appearence (C) and Covid-19 pneumonia negative (D).
 
-![Covid-19 Chest X-Ray Appearence Types](appearence_samples.jpg)
+<img src="appearence_samples.jpg" alt="Covid-19 Chest X-Ray Appearence Types" width="450" height="450"/>
 
 ### **Classification types:**
 
