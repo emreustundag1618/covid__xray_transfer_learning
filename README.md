@@ -4,11 +4,11 @@
 
 ### Graduate School of Natural and Applied Sciences - Department of Statistics
 
-#### *Summary*
+### **Summary**
 
 This application has been prepared as a master's thesis for the classification of Covid-19 disease from chest X-ray images. Convolutional neural networks and support vector machines are used for classification tasks.
 
-#### **Classes with radiological findings:**
+### **Classes with radiological findings:**
 
 *Negative:* Pneumonia negative, no obvious opacity, healthy appearance
 
@@ -18,7 +18,7 @@ This application has been prepared as a master's thesis for the classification o
 
 *Indeterminate appearance:* Findings that doesn't belong to typical or atypical appearances. For example, pneumothorax or pleural effusion, pulmonary edema, lobar consolidation, solitary lung nodule or mass, diffuse small nodules, cavity
 
-#### **Classification types:**
+### **Classification types:**
 
 *Negative - Positive* with all appearence types (binary)
 
@@ -34,7 +34,7 @@ Dataset used in the study:
 
 [https://www.kaggle.com/c/siim-covid19-detection](https://www.kaggle.com/c/siim-covid19-detection)
 
-#### Configuration:
+### Configuration:
 
 model\_name: CNN model name. &quot;DenseNet121&quot;, &quot;ResNet50&quot;, &quot;InceptionV3&quot; or &quot;Xception&quot;.
 
@@ -85,7 +85,7 @@ classes: Binary classification subtypes .
 - For indeterminate and negative, use: &quot;indeterminate -none&quot;
 - For all positive apperances and negative, use: &quot;all&quot;
 
-**For SVM classifier**
+#### **For SVM classifier**
 
 train\_num: Number of image data for SVM. &quot;5500 / batch\_size&quot; means 5500 training images&#39; features will be extracted from CNN model.
 
@@ -97,7 +97,7 @@ feature\_number: Number of features extracted from CNN model for SVM. 1000 has b
 
 svm\_hyp\_search: Hyperparameter optimization technique for SVM.
 
-Results:
+### Results:
 
 | **Classification Type** | **CNN Model** | **CNN** | **CNN + SVM** |
 | --- | --- | --- | --- |
