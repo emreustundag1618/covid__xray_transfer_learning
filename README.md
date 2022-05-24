@@ -99,11 +99,11 @@ svm\_hyp\_search: Hyperparameter optimization technique for SVM.
 
 Results:
 
-| **Sınıflandırma tipi** | **ESA Modeli** | **ESA** | **ESA + DVM** |
+| **Classification Type** | **CNN Model** | **CNN** | **CNN + SVM** |
 | --- | --- | --- | --- |
-| İkili(Covid-19 pozitif ya da negatif) | ResNet50V2 </br>InceptionV3</br>XCeption</br>CheXNet | 0.7850</br>0.7960</br>0.800</br> **0.807** | 0.7180</br>0.7990</br>0.7220</br>0.794 |
-| Çoklu(Tipik, atipik, belirsiz, normal) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.7470</br>0.7500</br>0.744</br> **0.771** | 0.6750.7260.6990.716 |
-| İkili(Tipik görünüm ya da negatif) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.8080</br>0.8350</br>0.8330</br>0.846 | 0.779 </br>**0.856** </br>0.8400</br>0.832 |
-| İkili(Atipik görünüm ya da negatif) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.5000</br>0.5800</br>0.5310</br>0.645 | 0.5000</br>0.6360</br>0.582</br> **0.683** |
-| İkili(Belirsiz görünüm ya da negatif) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.6240</br>0.6860</br>0.5340</br>0.698 | 0.6200</br>0.6600</br>0.689 </br>**0.752** |
+| Binary: Covid-19 (+) or (-) | ResNet50V2 </br>InceptionV3</br>XCeption</br>CheXNet | 0.7850</br>0.7960</br>0.800</br> **0.807** | 0.7180</br>0.7990</br>0.7220</br>0.794 |
+| Multi: Typical, Atypical, Indeterminate, Covid-19(-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.7470</br>0.7500</br>0.744</br> **0.771** | 0.6750</br>0.7260</br>0.6990</br>0.716 |
+| Binary: Typical appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.8080</br>0.8350</br>0.8330</br>0.846 | 0.779 </br>**0.856** </br>0.8400</br>0.832 |
+| Binary: Atypical appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.5000</br>0.5800</br>0.5310</br>0.645 | 0.5000</br>0.6360</br>0.582</br> **0.683** |
+| Binary: Indeterminate appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.6240</br>0.6860</br>0.5340</br>0.698 | 0.6200</br>0.6600</br>0.689 </br>**0.752** |
 
