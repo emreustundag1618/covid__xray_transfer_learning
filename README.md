@@ -6,31 +6,31 @@
 
 #### Summary
 
-Bu uygulama göğüs röntgen görüntülerinden Covid-19 hastalığının sınıflandırılmasına yönelik yüksek lisans tezi olarak hazırlanmıştır. Sınıflandırmada evrişimli sinir ağları ve destek vektör makineleri model olarak kullanılmıştır.
+This application has been prepared as a master's thesis for the classification of Covid-19 disease from chest X-ray images. Convolutional neural networks and support vector machines are used for classification tasks.
 
-Sınıflar:
+Classes with radiological findings:
 
-Negatif: Pnömoni negatif, belirgin opasite yok, sağlıklı görünüm
+Negative: Pneumonia negative, no obvious opacity, healthy appearance
 
-Tipik görünüm: Multifokal, bilateral, periferik opasiteler, Yuvarlak morfolojiye sahip opasiteler, Alt akciğer-baskın dağılım
+Typical appearance: Multifocal, bilateral, peripheral opacities, opacities with rounded morphology, lower lung-dominant distribution
 
-Atipik görünüm: Tipik bulguların olmaması ve tek taraflı opasiteler, merkezi veya üst akciğer baskın dağılımı
+Atypical appearance: Absence of typical findings and unilateral opacities, central or upper lung predominant distribution
 
-Belirsiz görünüm: Pnömotoraks veya plevral efüzyon, Pulmoner ödem, Lobar konsolidasyon, Soliter akciğer nodülü veya kitlesi, Diffüz küçük nodüller, Boşluk
+Indeterminate appearance: Findings that doesn't belong to typical or atypical appearances. For example, pneumothorax or pleural effusion, pulmonary edema, lobar consolidation, solitary lung nodule or mass, diffuse small nodules, cavity
 
-Sınıflandırma tipleri:
+**Classification types:**
 
-negatif - pozitif tüm görünüm tipleri (ikili)
+Negative - Positive with all appearence types (binary)
 
-negatif – tipik (ikili)
+Negative – Typical (binary)
 
-negatif – atipik (ikili)
+Negative – Atypical (ikili)
 
-negatif – belirsiz (ikili)
+Negative – Indeterminate (ikili)
 
-negatif - tipik - atipik – belirsiz (çoklu)
+Negative - Typical - Atypical – Indeterminate (multi)
 
-Çalışmada kullanılan veri seti:
+Dataset used in the study:
 
 [https://www.kaggle.com/c/siim-covid19-detection](https://www.kaggle.com/c/siim-covid19-detection)
 
@@ -101,9 +101,9 @@ Results:
 
 | **Classification Type** | **CNN Model** | **CNN** | **CNN + SVM** |
 | --- | --- | --- | --- |
-| Binary: Covid-19 (+) or (-) | ResNet50V2 </br>InceptionV3</br>XCeption</br>CheXNet | 0.7850</br>0.7960</br>0.800</br> **0.807** | 0.7180</br>0.7990</br>0.7220</br>0.794 |
-| Multi: Typical, Atypical, Indeterminate, Covid-19(-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.7470</br>0.7500</br>0.744</br> **0.771** | 0.6750</br>0.7260</br>0.6990</br>0.716 |
-| Binary: Typical appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.8080</br>0.8350</br>0.8330</br>0.846 | 0.779 </br>**0.856** </br>0.8400</br>0.832 |
-| Binary: Atypical appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.5000</br>0.5800</br>0.5310</br>0.645 | 0.5000</br>0.6360</br>0.582</br> **0.683** |
-| Binary: Indeterminate appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.6240</br>0.6860</br>0.5340</br>0.698 | 0.6200</br>0.6600</br>0.689 </br>**0.752** |
+| Binary: Covid-19 (+) or (-) | ResNet50V2 </br>InceptionV3</br>XCeption</br>CheXNet | 0.7850</br>0.7960</br>0.800</br> *0.807* | 0.7180</br>0.7990</br>0.7220</br>0.794 |
+| Multi: Typical, Atypical, Indeterminate, Covid-19(-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.7470</br>0.7500</br>0.744</br> *0.771* | 0.6750</br>0.7260</br>0.6990</br>0.716 |
+| Binary: Typical appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.8080</br>0.8350</br>0.8330</br>0.846 | 0.779 </br>*0.856* </br>0.8400</br>0.832 |
+| Binary: Atypical appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.5000</br>0.5800</br>0.5310</br>0.645 | 0.5000</br>0.6360</br>0.582</br> *0.683* |
+| Binary: Indeterminate appearence or Covid-19 (-) | ResNet50V2</br>InceptionV3</br>XCeption</br>CheXNet | 0.6240</br>0.6860</br>0.5340</br>0.698 | 0.6200</br>0.6600</br>0.689 </br>*0.752* |
 
