@@ -30,7 +30,7 @@ This application has been prepared as a master's thesis for the classification o
 
 *Negative - Typical - Atypical – Indeterminate* (multi)
 
-Dataset used in the study:
+#### Dataset used in the study:
 
 [https://www.kaggle.com/c/siim-covid19-detection](https://www.kaggle.com/c/siim-covid19-detection)
 
