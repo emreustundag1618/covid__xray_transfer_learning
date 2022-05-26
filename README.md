@@ -103,7 +103,7 @@ feature\_number: Number of features extracted from CNN model for SVM. 1000 has b
 
 svm\_hyp\_search: Hyperparameter optimization technique for SVM. For Bayesian optimization “bayes” and for Grid search “grid”.
 
-### Results:
+### AUC Score Results:
 
 | **Classification Type** | **CNN Model** | **CNN** | **CNN + SVM** |
 | --- | --- | --- | --- |
