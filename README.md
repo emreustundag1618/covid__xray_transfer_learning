@@ -14,9 +14,9 @@ This application has been prepared as a master's thesis for the classification o
 
 *Typical appearance:* Multifocal, bilateral, peripheral opacities, opacities with rounded morphology, lower lung-dominant distribution
 
-*Atypical appearance:* Absence of typical findings and unilateral opacities, central or upper lung predominant distribution
+*Indeterminate appearance:* Absence of typical findings and unilateral opacities, central or upper lung predominant distribution
 
-*Indeterminate appearance:* Findings that doesn't belong to typical or atypical appearances. For example, pneumothorax or pleural effusion, pulmonary edema, lobar consolidation, solitary lung nodule or mass, diffuse small nodules, cavity
+*Atypical appearance:* Findings that doesn't belong to typical or indeterminate appearances. For example, pneumothorax or pleural effusion, pulmonary edema, lobar consolidation, solitary lung nodule or mass, diffuse small nodules, cavity
 
 Looking at below samples you can see typical appearence (A), atypical appearace (B), indeterminate appearence (C) and Covid-19 pneumonia negative (D).
 
