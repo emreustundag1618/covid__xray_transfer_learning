@@ -1,4 +1,4 @@
-# Covid-19 Classification from Chest X-Ray Images with Deep Transfer Learning Methods
+# Covid-19 Classification from Chest X-Ray Images via Convolutional Neural Networks, Transfer Learning, and Support Vector Machines
 
 
 ### **Application Summary**
